@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inbox Client</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div id="loginOverlay" class="login-overlay">
+    <form id="loginForm" class="login-card">
+      <h1 data-i18n="login.title">Client login</h1>
+      <p data-i18n-html="login.hint">Enter the password from <code>APP_PASSWORD</code> in your <code>.env</code> file. It stays in memory until you close or reload this page.</p>
+      <input id="appPassword" type="password" placeholder="APP_PASSWORD" autocomplete="current-password" data-i18n-placeholder="login.passwordPlaceholder" />
+      <div id="loginError" class="login-error"></div>
+      <button class="primary" type="submit" data-i18n="login.button">Log in</button>
+    </form>
+  </div>
+
+  <section class="accounts-panel app-shell" id="accountsPanel">
+    <div class="accounts-actions">
+      <button class="primary" id="importButton" data-i18n="actions.import">Import accounts</button>
+      <button class="secondary" id="settingsButton" title="Reading mode and API settings" data-i18n="actions.settings" data-i18n-title="actions.settingsTitle">Settings</button>
+      <span id="modeBadge" class="mode-badge">IMAP</span>
+    </div>
+
+    <div class="accounts-toolbar">
+      <div class="search-wrap">
+        <span>⌕</span>
+        <input id="accountSearch" placeholder="Search accounts..." autocomplete="off" data-i18n-placeholder="search.placeholder" />
+      </div>
+      <button class="icon-btn" id="sortButton" title="Sort oldest first" data-i18n-title="sort.oldest">⌃</button>
+    </div>
+
+    <div class="panel-title"><span data-i18n="accounts.title">Accounts</span> <span id="accountCount"></span></div>
+    <div id="accountsList" class="accounts-list"></div>
+  </section>
+
+  <main class="main app-shell" id="mainPanel">
+    <header class="topbar">
+      <div class="current-account">
+        <span class="mail-icon">✉</span>
+        <span id="currentAccount" data-i18n="current.select">Select an account</span>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="backButton" type="button" title="Back to messages" aria-label="Back to messages" data-i18n-title="actions.back" data-i18n-aria-label="actions.back">←</button>
+        <button class="icon-btn" id="refreshButton" title="Refresh" data-i18n-title="actions.refresh">↻</button>
+        <button class="secondary" id="logoutButton" type="button" data-i18n="actions.logout">Log out</button>
+      </div>
+    </header>
+
+    <div class="content" id="content">
+      <section class="messages-panel">
+        <div class="messages-toolbar">
+          <label class="select-all"><input id="selectAll" type="checkbox" disabled aria-label="Select all messages" data-i18n-aria-label="toolbar.selectAll" /></label>
+          <button id="readButton" class="toolbar-btn" disabled data-i18n="toolbar.read">✓ Read</button>
+          <span id="statusText" class="status"></span>
+        </div>
+        <div id="messagesList" class="messages-list empty-state">
+          <div class="empty-icon">▱</div>
+          <h2>Nothing Here Yet</h2>
+          <p>Select an account or import mailboxes.</p>
+        </div>
+      </section>
+
+      <section id="reader" class="reader empty-reader">
+        <div class="empty-icon">✉</div>
+        <h2>No message selected</h2>
+        <p>Choose an email from Inbox to read it.</p>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="importDialog" class="modal">
+    <form method="dialog" class="modal-card" id="importForm">
+      <div class="modal-head">
+        <h2 data-i18n="dialog.import.title">Import accounts</h2>
+        <button class="icon-btn" value="cancel" type="submit">×</button>
+      </div>
+      <p class="hint" data-i18n-html="dialog.import.hint">Paste one mailbox per line in <code>email:password</code> format.</p>
+      <textarea id="importText" spellcheck="false" placeholder="my@mail.com:password&#10;other@mail.com:password" data-i18n-placeholder="dialog.import.placeholder"></textarea>
+      <div id="importResult" class="import-result"></div>
+      <div class="modal-actions">
+        <button type="button" class="secondary" id="cancelImport" data-i18n="common.cancel">Cancel</button>
+        <button type="button" class="primary" id="submitImport" data-i18n="dialog.import.submit">Import</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="deleteDialog" class="modal confirm-modal">
+    <div class="modal-head"><h2 data-i18n="dialog.delete.title">Delete account?</h2></div>
+    <p class="hint" id="deletePrompt"></p>
+    <div class="modal-actions">
+      <button type="button" class="secondary" id="cancelDelete" data-i18n="common.cancel">Cancel</button>
+      <button type="button" class="danger-button" id="confirmDelete" data-i18n="dialog.delete.confirm">Delete</button>
+    </div>
+  </dialog>
+
+  <dialog id="settingsDialog" class="modal settings-modal">
+    <form method="dialog" class="modal-card" id="settingsForm">
+      <div class="modal-head">
+        <h2 data-i18n="dialog.settings.title">Settings</h2>
+        <button class="icon-btn" value="cancel" type="submit">×</button>
+      </div>
+
+      <div class="settings-grid">
+        <label>
+          <span data-i18n="dialog.settings.language">Interface language</span>
+          <select id="languageSelect" title="Language" aria-label="Language" data-i18n-title="actions.languageTitle">
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+          </select>
+        </label>
+
+        <label>
+          <span data-i18n="dialog.settings.readMode">Reading mode</span>
+          <select id="readMode">
+            <option value="imap">IMAP</option>
+            <option value="api">NotLetters API</option>
+          </select>
+        </label>
+
+        <label>
+          <span data-i18n="dialog.settings.messageLimit">Message limit</span>
+          <input id="messageLimit" type="number" min="1" max="200" />
+        </label>
+
+        <label class="full-row">
+          <span data-i18n="dialog.settings.apiToken">NotLetters API token</span>
+          <input id="apiToken" type="password" placeholder="Leave empty to keep current token" autocomplete="off" data-i18n-placeholder="dialog.settings.apiTokenPlaceholderEmpty" />
+        </label>
+
+        <label class="check-row full-row">
+          <input id="clearApiToken" type="checkbox" />
+          <span data-i18n="dialog.settings.clearApiToken">Clear saved API token</span>
+        </label>
+
+        <label class="full-row">
+          <span data-i18n="dialog.settings.apiBaseUrl">API base URL</span>
+          <input id="apiBaseUrl" type="text" spellcheck="false" />
+        </label>
+
+        <label>
+          <span data-i18n="dialog.settings.imapHost">IMAP host</span>
+          <input id="imapHost" type="text" spellcheck="false" />
+        </label>
+
+        <label>
+          <span data-i18n="dialog.settings.imapPort">IMAP port</span>
+          <input id="imapPort" type="number" min="1" max="65535" />
+        </label>
+
+        <label class="check-row full-row">
+          <input id="imapSecure" type="checkbox" />
+          <span data-i18n="dialog.settings.imapSecure">Use IMAP SSL/TLS</span>
+        </label>
+      </div>
+
+      <div id="settingsResult" class="import-result"></div>
+      <div class="modal-actions">
+        <button type="button" class="secondary" id="cancelSettings" data-i18n="common.cancel">Cancel</button>
+        <button type="button" class="primary" id="saveSettings" data-i18n="dialog.settings.save">Save settings</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

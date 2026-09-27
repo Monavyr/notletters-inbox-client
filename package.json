@@ -1,0 +1,21 @@
+{
+  "name": "notletters-inbox-client",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only multi-account inbox client for NotLetters-style email:password accounts with IMAP/API modes and EN/RU interface.",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^5.0.0",
+    "imapflow": "^1.0.0",
+    "mailparser": "^3.0.0"
+  }
+}
