@@ -8,6 +8,16 @@
 
 **NotLetters Inbox Client** — локальное веб-приложение для просмотра входящих писем нескольких ящиков NotLetters. Оно не отправляет письма и не открывает другие папки.
 
+### Интерфейс
+
+На снимках показаны демонстрационные данные. Нажмите на изображение, чтобы открыть его в полном размере.
+
+| 1. Вход | 2. Основной экран |
+| --- | --- |
+| [![Окно входа в клиент](assets/screenshots/ru-01-login.png)](assets/screenshots/ru-01-login.png) | [![Список ящиков, письма и открытое сообщение](assets/screenshots/ru-02-inbox.png)](assets/screenshots/ru-02-inbox.png) |
+| 3. Импорт ящиков | 4. Настройки |
+| [![Окно импорта ящиков](assets/screenshots/ru-03-import.png)](assets/screenshots/ru-03-import.png) | [![Окно настроек](assets/screenshots/ru-04-settings.png)](assets/screenshots/ru-04-settings.png) |
+
 ### Возможности
 
 - Импорт нескольких ящиков в формате `email:password`; поиск, сортировка и удаление ящиков из клиента. Удаление из клиента не удаляет сам почтовый ящик.
@@ -52,6 +62,16 @@ npm start
 ## English
 
 **NotLetters Inbox Client** is a local web application for reading the inboxes of multiple NotLetters mailboxes. It does not send mail or open other folders.
+
+### Interface
+
+The screenshots use fictional demo data. Click an image to open it at full size.
+
+| 1. Login | 2. Main screen |
+| --- | --- |
+| [![Client login screen](assets/screenshots/en-01-login.png)](assets/screenshots/en-01-login.png) | [![Mailboxes, messages, and an open email](assets/screenshots/en-02-inbox.png)](assets/screenshots/en-02-inbox.png) |
+| 3. Import mailboxes | 4. Settings |
+| [![Mailbox import dialog](assets/screenshots/en-03-import.png)](assets/screenshots/en-03-import.png) | [![Settings dialog](assets/screenshots/en-04-settings.png)](assets/screenshots/en-04-settings.png) |
 
 ### Features
 
